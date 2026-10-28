@@ -1,0 +1,104 @@
+
+.pagina-funcionarios {
+  max-width: 850px;
+  margin: 0 auto;
+  padding: 30px 20px;
+}
+
+.pagina-funcionarios h2 {
+  color: #873653;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.introducao {
+  color: #6b5961;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.pagina-funcionarios form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  padding: 28px;
+  background: #fff8fb;
+  border: 1px solid #efd5e0;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(90, 35, 58, 0.08);
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.campo label {
+  color: #873653;
+  font-weight: 600;
+}
+
+.campo input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  border: 1px solid #d9bdc9;
+  border-radius: 8px;
+  background: white;
+  font-size: 15px;
+}
+
+.campo input:focus {
+  outline: 2px solid #c87598;
+  border-color: transparent;
+}
+
+.mensagem {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: #873653;
+  font-weight: 600;
+}
+
+.acoes {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.acoes button {
+  padding: 12px 18px;
+  border: none;
+  border-radius: 8px;
+  background: #873653;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.acoes button:hover {
+  background: #682640;
+}
+
+.acoes button[type="button"] {
+  background: #ead7df;
+  color: #682640;
+}
+
+.acoes button[type="button"]:hover {
+  background: #ddc0ce;
+}
+
+@media (max-width: 600px) {
+  .pagina-funcionarios form {
+    grid-template-columns: 1fr;
+    padding: 18px;
+  }
+
+  .mensagem,
+  .acoes {
+    grid-column: 1;
+  }
+}

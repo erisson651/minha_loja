@@ -1,0 +1,131 @@
+
+.cadastro {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.cadastro h2 {
+  margin-bottom: 8px;
+  color: #854456;
+  font-size: 30px;
+}
+
+.introducao {
+  margin-bottom: 25px;
+  color: #6b5b5b;
+  line-height: 1.6;
+}
+
+fieldset {
+  margin-bottom: 22px;
+  padding: 22px;
+  border: 1px solid #dfc5cc;
+  border-radius: 10px;
+  background: #fff;
+}
+
+legend {
+  padding: 0 10px;
+  color: #854456;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.campos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.campos label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  color: #493b3b;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.campos input,
+.campos select {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #dfc5cc;
+  border-radius: 7px;
+  background: white;
+  font-size: 15px;
+}
+
+.campos input:focus,
+.campos select:focus {
+  outline: 2px solid #d9a5b4;
+  border-color: #a65d70;
+}
+
+.acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 25px;
+}
+
+.acoes button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 7px;
+  background: #a65d70;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.acoes button:hover {
+  background: #854456;
+}
+
+.acoes .secundario {
+  border: 1px solid #a65d70;
+  background: white;
+  color: #854456;
+}
+
+.acoes a {
+  color: #854456;
+  text-decoration: none;
+}
+
+.acoes a:hover {
+  text-decoration: underline;
+}
+
+.mensagem {
+  padding: 12px;
+  border-radius: 7px;
+  background: #f8e9ee;
+  color: #854456;
+}
+
+@media (max-width: 600px) {
+  .cadastro h2 {
+    font-size: 25px;
+  }
+
+  .campos {
+    grid-template-columns: 1fr;
+  }
+
+  fieldset {
+    padding: 15px;
+  }
+
+  .acoes {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .acoes button {
+    width: 100%;
+  }
+}

@@ -1,0 +1,85 @@
+
+<section class="carrinho">
+  <h2>Meu carrinho</h2>
+
+  <p class="introducao">
+    Confira seus produtos antes de finalizar a compra.
+  </p>
+
+  @if (itens.length > 0) {
+    <div class="lista-itens">
+      @for (item of itens; track item.id) {
+        <article class="item-carrinho">
+          <div class="imagem-item">
+            <span>Produto</span>
+          </div>
+
+          <div class="detalhes-item">
+            <h3>{{ item.nome }}</h3>
+
+            <p class="preco-unitario">
+              Valor unitário:
+              {{ item.preco | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+            </p>
+
+            <div class="controle-quantidade">
+              <button
+                type="button"
+                (click)="diminuirQuantidade(item.id)"
+                [disabled]="item.quantidade === 1"
+                aria-label="Diminuir quantidade"
+              >
+                −
+              </button>
+
+              <span>{{ item.quantidade }}</span>
+
+              <button
+                type="button"
+                (click)="aumentarQuantidade(item.id)"
+                aria-label="Aumentar quantidade"
+              >
+                +
+              </button>
+            </div>
+
+            <p class="subtotal">
+              Subtotal:
+              {{ item.preco * item.quantidade | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+            </p>
+
+            <button
+              type="button"
+              class="remover"
+              (click)="removerItem(item.id)"
+            >
+              Remover produto
+            </button>
+          </div>
+        </article>
+      }
+    </div>
+
+    <div class="resumo">
+      <p>Total da compra</p>
+
+      <strong>
+        {{ total | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+      </strong>
+
+      <button
+        type="button"
+        class="finalizar"
+        (click)="finalizarCompra()"
+      >
+        Finalizar compra
+      </button>
+    </div>
+  } @else {
+    <div class="carrinho-vazio">
+      <h3>Seu carrinho está vazio</h3>
+      <p>Explore nossos produtos e encontre algo para você!</p>
+      <a routerLink="/produtos">Ver produtos</a>
+    </div>
+  }
+</section>

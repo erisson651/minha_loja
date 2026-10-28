@@ -1,0 +1,66 @@
+
+<section class="catalogo">
+  <h2>Nossos produtos</h2>
+
+  <p class="introducao">
+    Encontre produtos para cuidar da sua beleza e bem-estar.
+  </p>
+
+  <div class="filtros">
+    <input
+      type="text"
+      placeholder="Pesquisar produto..."
+      [(ngModel)]="pesquisa"
+    />
+
+    <select [(ngModel)]="categoriaSelecionada">
+      <option value="Todas">Todas as categorias</option>
+      <option value="Cuidados com a pele">Cuidados com a pele</option>
+      <option value="Cuidados com os cabelos">Cuidados com os cabelos</option>
+    </select>
+  </div>
+
+  @if (mensagem) {
+    <p class="mensagem-carrinho" role="status">
+      {{ mensagem }}
+    </p>
+  }
+
+  <div class="lista-produtos">
+    @for (produto of produtosFiltrados; track produto.id) {
+      <article class="produto">
+        <div class="imagem-produto">
+          <span>Produto</span>
+        </div>
+
+        <div class="informacoes">
+          <h3>{{ produto.nome }}</h3>
+
+          <p>{{ produto.descricao }}</p>
+
+          <p class="categoria">{{ produto.categoria }}</p>
+
+          <p class="preco">
+            {{ produto.preco | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+          </p>
+
+          <p class="estoque">
+            Disponíveis: {{ produto.estoque }}
+          </p>
+
+          <button
+            type="button"
+            [disabled]="produto.estoque === 0"
+            (click)="adicionarAoCarrinho(produto.id)"
+          >
+            Adicionar ao carrinho
+          </button>
+        </div>
+      </article>
+    } @empty {
+      <p class="sem-produtos">
+        Nenhum produto encontrado com esses filtros.
+      </p>
+    }
+  </div>
+</section>

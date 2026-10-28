@@ -1,0 +1,43 @@
+
+<section class="pagina-pedidos">
+  <h2>Histórico de pedidos</h2>
+  <p class="introducao">
+    Consulte os pedidos realizados na Estética &amp; Bem-Estar.
+  </p>
+
+  @if (pedidos.length === 0) {
+    <div class="vazio">
+      <h3>Nenhum pedido encontrado</h3>
+      <p>Quando você finalizar uma compra, o pedido aparecerá aqui.</p>
+      <a routerLink="/produtos">Ver produtos</a>
+    </div>
+  } @else {
+    <div class="lista-pedidos">
+      @for (pedido of pedidos; track pedido.id) {
+        <article class="pedido">
+          <h3>Pedido nº {{ pedido.id }}</h3>
+          <p>
+            <strong>Data:</strong>
+            {{ pedido.data | date:'dd/MM/yyyy HH:mm' }}
+          </p>
+          <p><strong>Status:</strong> {{ pedido.status }}</p>
+
+          <h4>Produtos</h4>
+          <ul>
+            @for (item of pedido.itens; track item.id) {
+              <li>
+                {{ item.nome }} — {{ item.quantidade }} unidade(s)
+                — {{ item.preco * item.quantidade | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+              </li>
+            }
+          </ul>
+
+          <p class="total">
+            Total: {{ pedido.total | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+          </p>
+        </article>
+      }
+    </div>
+  }
+</section>
+

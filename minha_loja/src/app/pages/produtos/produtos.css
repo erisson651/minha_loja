@@ -1,0 +1,120 @@
+
+.catalogo h2 {
+  margin-bottom: 8px;
+  color: #854456;
+  font-size: 30px;
+}
+
+.introducao {
+  margin-bottom: 25px;
+  color: #6b5b5b;
+}
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.filtros input,
+.filtros select {
+  flex: 1;
+  min-width: 220px;
+  padding: 12px;
+  border: 1px solid #dfc5cc;
+  border-radius: 8px;
+  background: white;
+  font-size: 15px;
+}
+
+.lista-produtos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 22px;
+}
+
+.produto {
+  overflow: hidden;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px #00000012;
+  transition: transform 0.2s;
+}
+
+.produto:hover {
+  transform: translateY(-4px);
+}
+
+.imagem-produto {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 130px;
+  background: #f2dfe5;
+  color: #854456;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.informacoes {
+  padding: 20px;
+}
+
+.informacoes h3 {
+  margin-top: 0;
+  color: #493b3b;
+}
+
+.categoria {
+  color: #806b72;
+  font-size: 13px;
+}
+
+.preco {
+  color: #854456;
+  font-size: 23px;
+  font-weight: bold;
+}
+
+.estoque {
+  font-size: 14px;
+  color: #625454;
+}
+
+.produto button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 7px;
+  background: #a65d70;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.produto button:hover {
+  background: #854456;
+}
+
+.produto button:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}
+
+.sem-produtos {
+  padding: 20px;
+  text-align: center;
+  color: #854456;
+}
+
+@media (max-width: 600px) {
+  .catalogo h2 {
+    font-size: 25px;
+  }
+
+  .filtros {
+    flex-direction: column;
+  }
+}
+

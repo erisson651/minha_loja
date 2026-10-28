@@ -1,0 +1,56 @@
+
+<section class="catalogo">
+  <h2>Nossos serviços</h2>
+
+  <p class="introducao">
+    Conheça nossos serviços de estética e bem-estar.
+  </p>
+
+  <div class="filtros">
+    <input
+      type="text"
+      placeholder="Pesquisar serviço..."
+      [(ngModel)]="pesquisa"
+    />
+
+    <select [(ngModel)]="categoriaSelecionada">
+      <option value="Todas">Todas as categorias</option>
+      <option value="Cuidados com a pele">Cuidados com a pele</option>
+      <option value="Bem-estar">Bem-estar</option>
+      <option value="Cuidados com os cabelos">Cuidados com os cabelos</option>
+    </select>
+  </div>
+
+  <div class="lista-servicos">
+    @for (servico of servicosFiltrados; track servico.id) {
+      <article class="servico">
+        <div class="imagem-servico">
+          <span>Serviço</span>
+        </div>
+
+        <div class="informacoes">
+          <h3>{{ servico.nome }}</h3>
+
+          <p>{{ servico.descricao }}</p>
+
+          <p class="categoria">{{ servico.categoria }}</p>
+
+          <p class="preco">
+            {{ servico.preco | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+          </p>
+
+          <button
+            type="button"
+            (click)="selecionarServico(servico.nome)"
+          >
+            Selecionar serviço
+          </button>
+        </div>
+      </article>
+    } @empty {
+      <p class="sem-servicos">
+        Nenhum serviço encontrado com esses filtros.
+      </p>
+    }
+  </div>
+</section>
