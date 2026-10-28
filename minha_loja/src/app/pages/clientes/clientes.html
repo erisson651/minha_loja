@@ -159,7 +159,9 @@
     }
 
     <div class="acoes">
-      <button type="submit">Validar cadastro</button>
+      <button type="submit" [disabled]="salvando">
+        {{ salvando ? 'Salvando...' : 'Cadastrar cliente' }}
+      </button>
       <button type="button" class="secundario" (click)="limparFormulario()">
         Limpar
       </button>
