@@ -1,36 +1,78 @@
 
 <section class="catalogo">
-    <h1>Estética & Bem-Estar</h1>
-    <p class="subtitulo">Conheça nossos produtos e serviços.</p>
-   
-    <p>Quantidade de itens recebidos: {{ itens.length }}</p>
-  
-    <p *ngIf="mensagem">{{ mensagem }}</p>
-  
-    <div class="lista-itens" *ngIf="itens.length > 0; else semItens">
-      <article class="card-item" *ngFor="let item of itens">
-        <h2>{{ item.iditemNavigation?.item1 }}</h2>
-  
-        <p>{{ item.iditemNavigation?.descricaoItem }}</p>
-  
-        <p class="preco">
-          {{ item.precoVenda | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
-        </p>
-  
-        <p>
-          Tipo:
-          {{ item.iditemNavigation?.tipoItem === 'P' ? 'Produto' : 'Serviço' }}
-        </p>
-  
-        <p>
-          Situação:
-          {{ item.iditemNavigation?.ativoProdutoServico === 'S' ? 'Ativo' : 'Inativo' }}
-        </p>
-      </article>
-    </div>
-  
-    <ng-template #semItens>
-      <p *ngIf="!mensagem">Nenhum item encontrado no catálogo.</p>
-    </ng-template>
-  </section>
-  
+
+  <h1>Estética & Bem-Estar</h1>
+
+  <p class="subtitulo">
+    Conheça nossos produtos e serviços.
+  </p>
+
+  <!-- Pesquisa de produtos -->
+  <div class="filtros">
+    <input
+      type="text"
+      [(ngModel)]="pesquisa"
+      (input)="filtrarItens()"
+      placeholder="Pesquisar produto pelo nome..."
+    >
+  </div>
+
+  <!-- Consulta de item por ID -->
+<div class="consulta-id">
+  <input
+    type="number"
+    [(ngModel)]="idConsulta"
+    placeholder="Digite o ID do item..."
+  >
+
+  <button type="button" (click)="buscarPorId()">
+    Consultar
+  </button>
+</div>
+
+  <p>Quantidade de itens recebidos: {{ itensFiltrados.length }}</p>
+
+  <p *ngIf="mensagem">
+    {{ mensagem }}
+  </p>
+
+  <!-- Lista de produtos -->
+  <div class="lista-itens"
+       *ngIf="itensFiltrados.length > 0; else semItens">
+
+    <article class="card-item" *ngFor="let item of itensFiltrados">
+
+      <h2>
+        {{ item.iditemNavigation?.item1 }}
+      </h2>
+
+      <p>
+        {{ item.iditemNavigation?.descricaoItem }}
+      </p>
+
+      <p class="preco">
+        {{ item.precoVenda | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+      </p>
+
+      <p>
+        Tipo:
+        {{ item.iditemNavigation?.tipoItem === 'P' ? 'Produto' : 'Serviço' }}
+      </p>
+
+      <p>
+        Situação:
+        {{ item.iditemNavigation?.ativoProdutoServico === 'S' ? 'Ativo' : 'Inativo' }}
+      </p>
+
+    </article>
+
+  </div>
+
+  <!-- Mensagem quando não encontrar produtos -->
+  <ng-template #semItens>
+    <p *ngIf="!mensagem">
+      Nenhum item encontrado no catálogo.
+    </p>
+  </ng-template>
+
+</section>

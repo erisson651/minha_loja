@@ -1,5 +1,4 @@
 
-
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -79,11 +78,18 @@ export class Clientes {
       ]
     };
 
+    // Validação do CPF
     if (
       !Number.isSafeInteger(dadosCliente.cpf) ||
-      !Number.isSafeInteger(dadosCliente.telefone)
+      dadosCliente.cpf.toString().length !== 11
     ) {
-      this.mensagem = 'Confira o CPF e o telefone informados.';
+      this.mensagem = 'CPF inválido. Informe os 11 dígitos.';
+      return;
+    }
+
+    // Validação do telefone
+    if (!Number.isSafeInteger(dadosCliente.telefone)) {
+      this.mensagem = 'Telefone inválido.';
       return;
     }
 
@@ -95,6 +101,7 @@ export class Clientes {
         this.limparCampos();
         this.salvando = false;
       },
+
       error: (erro: any) => {
         if (erro.status === 409) {
           this.mensagem = 'Este CPF já está cadastrado.';
