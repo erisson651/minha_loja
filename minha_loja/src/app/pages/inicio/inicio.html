@@ -7,28 +7,58 @@
     Conheça nossos produtos e serviços.
   </p>
 
-  <!-- Pesquisa de produtos -->
+  <!-- Pesquisa e filtros -->
   <div class="filtros">
+
     <input
       type="text"
       [(ngModel)]="pesquisa"
       (input)="filtrarItens()"
       placeholder="Pesquisar produto pelo nome..."
     >
+
+    <select
+      [(ngModel)]="categoriaSelecionada"
+      (change)="filtrarItens()"
+    >
+      <option value="">Todas as categorias</option>
+
+      <option
+        *ngFor="let item of itens"
+        [value]="item.iditemNavigation?.idcategoriaNavigation?.categoria"
+      >
+        {{ item.iditemNavigation?.idcategoriaNavigation?.categoria }}
+      </option>
+    </select>
+
+    <select
+      [(ngModel)]="tipoSelecionado"
+      (change)="filtrarItens()"
+    >
+      <option value="">Todos os tipos</option>
+      <option value="P">Produtos</option>
+      <option value="S">Serviços</option>
+    </select>
+
   </div>
 
   <!-- Consulta de item por ID -->
-<div class="consulta-id">
-  <input
-    type="number"
-    [(ngModel)]="idConsulta"
-    placeholder="Digite o ID do item..."
-  >
+  <div class="consulta-id">
 
-  <button type="button" (click)="buscarPorId()">
-    Consultar
-  </button>
-</div>
+    <input
+      type="number"
+      [(ngModel)]="idConsulta"
+      placeholder="Digite o ID do item..."
+    >
+
+    <button
+      type="button"
+      (click)="buscarPorId()"
+    >
+      Consultar
+    </button>
+
+  </div>
 
   <p>Quantidade de itens recebidos: {{ itensFiltrados.length }}</p>
 
@@ -36,11 +66,16 @@
     {{ mensagem }}
   </p>
 
-  <!-- Lista de produtos -->
-  <div class="lista-itens"
-       *ngIf="itensFiltrados.length > 0; else semItens">
+  <!-- Lista de produtos e serviços -->
+  <div
+    class="lista-itens"
+    *ngIf="itensFiltrados.length > 0; else semItens"
+  >
 
-    <article class="card-item" *ngFor="let item of itensFiltrados">
+    <article
+      class="card-item"
+      *ngFor="let item of itensFiltrados"
+    >
 
       <h2>
         {{ item.iditemNavigation?.item1 }}
@@ -63,6 +98,14 @@
         Situação:
         {{ item.iditemNavigation?.ativoProdutoServico === 'S' ? 'Ativo' : 'Inativo' }}
       </p>
+
+      <!-- Adicionar ao carrinho -->
+      <button
+        type="button"
+        (click)="adicionarAoCarrinho(item)"
+      >
+        Adicionar ao carrinho
+      </button>
 
     </article>
 

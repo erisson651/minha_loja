@@ -3,6 +3,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Catalogo } from '../../services/catalogo';
+import { CarrinhoService } from '../../services/carrinho';
 
 @Component({
   selector: 'app-inicio',
@@ -26,7 +27,8 @@ export class Inicio implements OnInit {
 
   constructor(
     private catalogo: Catalogo,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private carrinho: CarrinhoService
   ) {}
 
   filtrarItens(): void {
@@ -35,7 +37,22 @@ export class Inicio implements OnInit {
     this.itensFiltrados = this.itens.filter(item => {
       const nome = item.iditemNavigation?.item1?.toLowerCase() || '';
 
-      return nome.includes(pesquisa);
+      const categoria =
+        item.iditemNavigation?.idcategoriaNavigation?.categoria || '';
+
+      const tipo = item.iditemNavigation?.tipoItem || '';
+
+      const correspondeNome = nome.includes(pesquisa);
+
+      const correspondeCategoria =
+        !this.categoriaSelecionada ||
+        categoria === this.categoriaSelecionada;
+
+      const correspondeTipo =
+        !this.tipoSelecionado ||
+        tipo === this.tipoSelecionado;
+
+      return correspondeNome && correspondeCategoria && correspondeTipo;
     });
   }
 
@@ -44,32 +61,45 @@ export class Inicio implements OnInit {
       this.mensagem = 'Digite um ID válido.';
       return;
     }
-  
+
     this.catalogo.buscarItemPorId(this.idConsulta).subscribe({
       next: (dados) => {
         console.log('Item encontrado:', dados);
-  
+
         const itemEncontrado = {
+          iditem: dados.iditem,
           precoVenda: dados.preco,
           iditemNavigation: dados
         };
-  
+
         this.itensFiltrados = [itemEncontrado];
-  
+
         this.mensagem = `Item encontrado: ${dados.item1}`;
-  
+
         this.cdr.detectChanges();
       },
-  
+
       error: (erro) => {
         console.error('Erro ao consultar item:', erro);
-  
+
         this.itensFiltrados = [];
         this.mensagem = 'Item não encontrado.';
-  
+
         this.cdr.detectChanges();
       }
     });
+  }
+
+  adicionarAoCarrinho(item: any): void {
+    const produto = {
+      id: item.iditem,
+      nome: item.iditemNavigation?.item1,
+      preco: Number(item.precoVenda)
+    };
+
+    this.carrinho.adicionarItem(produto);
+
+    this.mensagem = `${produto.nome} adicionado ao carrinho!`;
   }
 
   ngOnInit(): void {

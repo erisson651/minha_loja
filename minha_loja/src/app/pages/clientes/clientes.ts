@@ -12,8 +12,10 @@ import { ClientesService } from '../../services/clientes';
   styleUrl: './clientes.css'
 })
 export class Clientes {
+
   constructor(private clientesService: ClientesService) {}
 
+  // Dados preenchidos pelo usuário no formulário
   cliente = {
     nome: '',
     cpf: '',
@@ -33,9 +35,11 @@ export class Clientes {
 
   salvando = false;
 
+  // Método responsável por cadastrar o cliente
   salvarCliente() {
     this.mensagem = '';
 
+    // Verifica se todos os campos obrigatórios foram preenchidos
     if (
       !this.cliente.nome.trim() ||
       !this.cliente.cpf.trim() ||
@@ -54,14 +58,32 @@ export class Clientes {
       return;
     }
 
+    // Remove pontos, traços e outros caracteres do CPF
+    const cpfLimpo = this.cliente.cpf.replace(/\D/g, '');
+
+    // Verifica se o CPF possui exatamente 11 dígitos
+    if (cpfLimpo.length !== 11) {
+      this.mensagem = 'CPF inválido. Informe os 11 dígitos.';
+      return;
+    }
+
+    // Remove caracteres que não sejam números do telefone
+    const telefoneLimpo = this.cliente.telefone.replace(/\D/g, '');
+
+    if (!telefoneLimpo || !Number.isSafeInteger(Number(telefoneLimpo))) {
+      this.mensagem = 'Telefone inválido.';
+      return;
+    }
+
+    // Organiza os dados que serão enviados para a API
     const dadosCliente = {
       idPessoa: 0,
       nome: this.cliente.nome.trim(),
-      cpf: Number(this.cliente.cpf.replace(/\D/g, '')),
+      cpf: Number(cpfLimpo),
       dataNascimento: this.cliente.dataNascimento,
       sexo: this.cliente.sexo,
       email: this.cliente.email.trim(),
-      telefone: Number(this.cliente.telefone.replace(/\D/g, '')),
+      telefone: Number(telefoneLimpo),
       ativoPessoa: 'S',
       enderecos: [
         {
@@ -78,47 +100,41 @@ export class Clientes {
       ]
     };
 
-    // Validação do CPF
-    if (
-      !Number.isSafeInteger(dadosCliente.cpf) ||
-      dadosCliente.cpf.toString().length !== 11
-    ) {
-      this.mensagem = 'CPF inválido. Informe os 11 dígitos.';
-      return;
-    }
-
-    // Validação do telefone
-    if (!Number.isSafeInteger(dadosCliente.telefone)) {
-      this.mensagem = 'Telefone inválido.';
-      return;
-    }
-
+    // Informa que o cadastro está sendo enviado
     this.salvando = true;
 
+    // Envia os dados para a API C#
     this.clientesService.cadastrarCliente(dadosCliente).subscribe({
       next: () => {
         this.mensagem = 'Cliente cadastrado com sucesso!';
+
         this.limparCampos();
+
         this.salvando = false;
       },
 
       error: (erro: any) => {
+
         if (erro.status === 409) {
           this.mensagem = 'Este CPF já está cadastrado.';
+
         } else if (erro.status === 400) {
           this.mensagem =
             'Os dados enviados foram rejeitados. Confira os campos.';
+
         } else {
           this.mensagem =
             'Não foi possível cadastrar. Verifique se a API C# está em execução.';
         }
 
         console.error('Erro ao cadastrar cliente:', erro);
+
         this.salvando = false;
       }
     });
   }
 
+  // Limpa os campos do formulário
   private limparCampos() {
     this.cliente = {
       nome: '',
@@ -136,6 +152,7 @@ export class Clientes {
     };
   }
 
+  // Limpa o formulário e a mensagem exibida
   limparFormulario() {
     this.limparCampos();
     this.mensagem = '';
