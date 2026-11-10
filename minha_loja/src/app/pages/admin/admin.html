@@ -1,1 +1,97 @@
-<p>admin works!</p>
+<section class="painel">
+  <h2>Painel administrativo</h2>
+
+  <ul class="resumo">
+    <li>Clientes: {{ erros['clientes'] || clientes.length }}</li>
+    <li>Produtos: {{ erros['produtos'] || produtos || (produtos === 0 ? 0 : 'Carregando…') }}</li>
+    <li>Serviços: {{ erros['serviços'] || servicos || (servicos === 0 ? 0 : 'Carregando…') }}</li>
+    <li>Pedidos: {{ erros['pedidos'] || pedidos.length }}</li>
+    <li>Produtos em estoque: {{ erros['estoque'] || estoque.length }}</li>
+  </ul>
+
+  <section>
+    <h3>Clientes</h3>
+    <form (ngSubmit)="buscarCliente()">
+      <label>ID do cliente <input name="cliente" type="number" min="1" [(ngModel)]="idCliente"></label>
+      <button type="submit">Consultar</button>
+    </form>
+    <p role="status">{{ erros['cliente'] }}</p>
+    @if (cliente) { <p>{{ cliente.idPessoa }} · {{ cliente.nome }}</p> }
+    <ul>
+      @for (pessoa of clientes; track pessoa.idPessoa) {
+        <li>{{ pessoa.idPessoa }} · {{ pessoa.nome }}</li>
+      }
+    </ul>
+  </section>
+
+  <section>
+    <h3>Pedidos</h3>
+    <label>Situação
+      <select [(ngModel)]="status">
+        <option value="">Todas</option>
+        <option value="A">Em aberto</option>
+        <option value="F">Finalizados</option>
+      </select>
+    </label>
+    <form (ngSubmit)="buscarPedido()">
+      <label>ID do pedido <input name="pedido" type="number" min="1" [(ngModel)]="idPedido"></label>
+      <button type="submit">Ver detalhes</button>
+    </form>
+    <p role="status">{{ erros['pedido'] }}</p>
+    @if (pedido) {
+      <h4>Pedido nº {{ pedido.idatendimento }}</h4>
+      <p>{{ pedido.dataAtendimento }} · {{ pedido.statusAtendimento }}</p>
+      <ul>
+        @for (item of pedido.atendimentoitems; track item.iditem) {
+          <li>{{ item.iditemNavigation?.item1 || item.iditem }} · {{ item.quantidadeItens }} ×
+            {{ item.valorunitarioEntrada | currency:'BRL' }}
+            @if (item.idfuncionarioNavigation?.cargo; as cargo) { · {{ cargo }} }
+          </li>
+        } @empty {
+          <li>Pedido sem itens.</li>
+        }
+      </ul>
+    }
+    <ul>
+      @for (registro of pedidosFiltrados; track registro.idatendimento) {
+        <li>#{{ registro.idatendimento }} · {{ registro.idpessoasNavigation?.nome || registro.idpessoas }}
+          · {{ registro.dataAtendimento }} · {{ registro.statusAtendimento }}
+        </li>
+      } @empty {
+        <li>Nenhum pedido para exibir.</li>
+      }
+    </ul>
+  </section>
+
+  <section>
+    <h3>Estoque</h3>
+    <label>Filtrar por ID <input type="number" min="1" [(ngModel)]="idEstoque"></label>
+    <ul>
+      @for (item of estoqueFiltrado; track item.iditem) {
+        <li>{{ item.iditem }} · {{ item.nome }} · {{ item.descricao }} · {{ item.quantidadeEstoque }}
+          {{ item.unidade }} · {{ item.precoVenda | currency:'BRL' }}</li>
+      } @empty {
+        <li>Nenhum produto para exibir.</li>
+      }
+    </ul>
+  </section>
+
+  <section>
+    <h3>Registrar entrada de produto</h3>
+    <form (ngSubmit)="registrarEntrada()">
+      <label>Produto
+        <select name="produto" [(ngModel)]="entrada.iditem">
+          <option [ngValue]="0">Selecione</option>
+          @for (item of estoque; track item.iditem) {
+            <option [ngValue]="item.iditem">{{ item.nome }} ({{ item.unidade }})</option>
+          }
+        </select>
+      </label>
+      <label>Data <input name="data" type="date" [(ngModel)]="entrada.dataEntradaProduto"></label>
+      <label>Quantidade <input name="quantidade" type="number" min="1" step="1" [(ngModel)]="entrada.quantidadeEntrada"></label>
+      <label>Valor unitário <input name="valor" type="number" min="0.01" step="0.01" [(ngModel)]="entrada.valorUnitarioEntrada"></label>
+      <button type="submit" [disabled]="salvando">{{ salvando ? 'Registrando…' : 'Registrar entrada' }}</button>
+    </form>
+    <p role="status">{{ mensagemEntrada }}</p>
+  </section>
+</section>

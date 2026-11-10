@@ -1,0 +1,28 @@
+.painel {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.painel section {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border: 1px solid #ded5e0;
+  border-radius: 0.75rem;
+}
+
+.painel form, .resumo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: end;
+}
+
+.painel label {
+  display: inline-grid;
+  gap: 0.25rem;
+}
+
+.painel input, .painel select, .painel button {
+  padding: 0.5rem;
+}

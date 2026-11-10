@@ -3,7 +3,7 @@
   <h2>Meu carrinho</h2>
 
   <p class="introducao">
-    Confira seus produtos antes de finalizar a compra.
+    Confira seus itens antes de finalizar a compra.
   </p>
 
   @if (itens.length > 0) {
@@ -11,7 +11,7 @@
       @for (item of itens; track item.id) {
         <article class="item-carrinho">
           <div class="imagem-item">
-            <span>Produto</span>
+            <span>Item</span>
           </div>
 
           <div class="detalhes-item">
@@ -53,7 +53,7 @@
               class="remover"
               (click)="removerItem(item.id)"
             >
-              Remover produto
+              Remover item
             </button>
           </div>
         </article>
@@ -81,5 +81,8 @@
       <p>Explore nossos produtos e encontre algo para você!</p>
       <a routerLink="/produtos">Ver produtos</a>
     </div>
+  }
+  @if (mensagem) {
+    <p role="status">{{ mensagem }}</p>
   }
 </section>
