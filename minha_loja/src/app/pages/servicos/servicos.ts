@@ -2,7 +2,6 @@
 import { ChangeDetectorRef, Component, afterNextRender } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CurrencyPipe } from '@angular/common';
-import { forkJoin } from 'rxjs';
 import { Catalogo } from '../../services/catalogo';
 import { CarrinhoService } from '../../services/carrinho';
 
@@ -17,42 +16,108 @@ export class Servicos {
   pesquisa: string = '';
   categoriaSelecionada: string = 'Todas';
 
-  servicos: { id: number; nome: string; descricao: string; categoria: string; preco: number }[] = [];
-  categorias: string[] = [];
+  servicos: { id: number; nome: string; descricao: string; idcategoria: number; preco: number }[] = [];
+  categorias: { idcategoria: number; categoria: string }[] = [];
   mensagem = '';
+  erroCategorias = '';
+  erroServicos = '';
   carregando = true;
+  salvando = false;
+  aba: 'catalogo' | 'cadastro' = 'catalogo';
+  cadastro = { idcategoria: 0, nome: '', descricao: '', preco: null as number | null };
 
   constructor(
     private catalogo: Catalogo,
     private carrinho: CarrinhoService,
     private cdr: ChangeDetectorRef
   ) {
-    afterNextRender(() => this.carregarServicos());
+    afterNextRender(() => {
+      this.carregarCategorias();
+      this.carregarServicos();
+    });
+  }
+
+  get nomesCategorias(): string[] {
+    return [...new Set(this.categorias.map(categoria => categoria.categoria))];
+  }
+
+  nomeCategoria(id: number): string {
+    return this.categorias.find(categoria => categoria.idcategoria === id)?.categoria ?? '';
+  }
+
+  private carregarCategorias(): void {
+    this.catalogo.listarCategorias().subscribe({
+      next: categorias => {
+        this.categorias = categorias;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.erroCategorias = 'Não foi possível carregar as categorias.';
+        this.cdr.markForCheck();
+      }
+    });
   }
 
   private carregarServicos(): void {
-    forkJoin({
-      servicos: this.catalogo.listarServicos(),
-      categorias: this.catalogo.listarCategorias()
-    }).subscribe({
-      next: ({ servicos, categorias }) => {
-        this.categorias = categorias.map(categoria => categoria.categoria);
+    this.carregando = true;
+    this.erroServicos = '';
+    this.catalogo.listarServicos().subscribe({
+      next: servicos => {
         this.servicos = servicos
           .filter(servico => servico.ativoProdutoServico === 'S')
           .map(servico => ({
             id: servico.iditem,
             nome: servico.item1,
             descricao: servico.descricaoItem,
-            categoria: categorias.find(categoria =>
-              categoria.idcategoria === servico.idcategoria)?.categoria ?? '',
+            idcategoria: servico.idcategoria,
             preco: Number(servico.preco)
           }));
         this.carregando = false;
         this.cdr.markForCheck();
       },
       error: () => {
-        this.mensagem = 'Não foi possível carregar os serviços.';
+        this.erroServicos = 'Não foi possível carregar os serviços.';
         this.carregando = false;
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  cadastrarServico(): void {
+    if (this.salvando) {
+      return;
+    }
+
+    const { idcategoria, nome, descricao, preco } = this.cadastro;
+    if (!this.categorias.some(categoria => categoria.idcategoria === idcategoria)
+        || !nome.trim() || !descricao.trim()
+        || preco === null || !Number.isFinite(preco) || preco <= 0) {
+      this.mensagem = 'Informe categoria, nome, descrição e um preço maior que zero.';
+      return;
+    }
+
+    this.salvando = true;
+    this.mensagem = '';
+    this.catalogo.cadastrarServico({
+      idcategoria,
+      item1: nome.trim(),
+      descricaoItem: descricao.trim(),
+      preco
+    }).subscribe({
+      next: () => {
+        this.salvando = false;
+        this.cadastro = { idcategoria: 0, nome: '', descricao: '', preco: null };
+        this.pesquisa = '';
+        this.categoriaSelecionada = 'Todas';
+        this.aba = 'catalogo';
+        this.mensagem = 'Serviço cadastrado com sucesso!';
+        this.carregarServicos();
+        this.cdr.markForCheck();
+      },
+      error: erro => {
+        this.salvando = false;
+        this.mensagem = typeof erro.error === 'string' && erro.error
+          ? erro.error : 'Não foi possível cadastrar o serviço.';
         this.cdr.markForCheck();
       }
     });
@@ -66,7 +131,7 @@ export class Servicos {
 
       const correspondeCategoria =
         this.categoriaSelecionada === 'Todas' ||
-        servico.categoria === this.categoriaSelecionada;
+        this.nomeCategoria(servico.idcategoria) === this.categoriaSelecionada;
 
       return correspondeNome && correspondeCategoria;
     });

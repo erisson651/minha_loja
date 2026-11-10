@@ -6,55 +6,86 @@
     Conheça nossos serviços de estética e bem-estar.
   </p>
 
-  <div class="filtros">
-    <input
-      type="text"
-      placeholder="Pesquisar serviço..."
-      [(ngModel)]="pesquisa"
-    />
-
-    <select [(ngModel)]="categoriaSelecionada">
-      <option value="Todas">Todas as categorias</option>
-      @for (categoria of categorias; track categoria) {
-        <option [value]="categoria">{{ categoria }}</option>
-      }
-    </select>
+  <div class="abas" role="group" aria-label="Opções de serviços">
+    <button type="button" [attr.aria-pressed]="aba === 'catalogo'" (click)="aba = 'catalogo'; mensagem = ''">
+      Catálogo
+    </button>
+    <button type="button" [attr.aria-pressed]="aba === 'cadastro'" (click)="aba = 'cadastro'; mensagem = ''">
+      Cadastro de serviço
+    </button>
   </div>
 
   @if (mensagem) {
     <p role="status">{{ mensagem }}</p>
   }
 
-  <div class="lista-servicos">
-    @for (servico of servicosFiltrados; track servico.id) {
-      <article class="servico">
-        <div class="imagem-servico">
-          <span>Serviço</span>
-        </div>
+  @if (aba === 'cadastro') {
+    <form class="cadastro-servico" (ngSubmit)="cadastrarServico()">
+      <label>Nome <input name="nome" [(ngModel)]="cadastro.nome" required></label>
+      <label>Descrição <textarea name="descricao" [(ngModel)]="cadastro.descricao" required></textarea></label>
+      <label>Preço (R$) <input name="preco" type="number" min="0.01" step="0.01" [(ngModel)]="cadastro.preco" required></label>
+      <label>Categoria
+        <select name="categoria" [(ngModel)]="cadastro.idcategoria">
+          <option [ngValue]="0">Selecione</option>
+          @for (categoria of categorias; track categoria.idcategoria) {
+            <option [ngValue]="categoria.idcategoria">{{ categoria.categoria }} ({{ categoria.idcategoria }})</option>
+          }
+        </select>
+      </label>
+      @if (erroCategorias) {
+        <p role="status">{{ erroCategorias }}</p>
+      }
+      <button type="submit" [disabled]="salvando || !categorias.length">
+        {{ salvando ? 'Salvando...' : 'Salvar serviço' }}
+      </button>
+    </form>
+  } @else {
+    <div class="filtros">
+      <input
+        type="text"
+        placeholder="Pesquisar serviço..."
+        [(ngModel)]="pesquisa"
+      />
 
-        <div class="informacoes">
-          <h3>{{ servico.nome }}</h3>
+      <select [(ngModel)]="categoriaSelecionada">
+        <option value="Todas">Todas as categorias</option>
+        @for (categoria of nomesCategorias; track categoria) {
+          <option [value]="categoria">{{ categoria }}</option>
+        }
+      </select>
+    </div>
 
-          <p>{{ servico.descricao }}</p>
+    <div class="lista-servicos">
+      @for (servico of servicosFiltrados; track servico.id) {
+        <article class="servico">
+          <div class="imagem-servico">
+            <span>Serviço</span>
+          </div>
 
-          <p class="categoria">{{ servico.categoria }}</p>
+          <div class="informacoes">
+            <h3>{{ servico.nome }}</h3>
 
-          <p class="preco">
-            {{ servico.preco | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
-          </p>
+            <p>{{ servico.descricao }}</p>
 
-          <button
-            type="button"
-            (click)="adicionarAoCarrinho(servico)"
-          >
-            Adicionar ao carrinho
-          </button>
-        </div>
-      </article>
-    } @empty {
-      <p class="sem-servicos">
-        {{ carregando ? 'Carregando serviços...' : 'Nenhum serviço encontrado.' }}
-      </p>
-    }
-  </div>
+            <p class="categoria">{{ nomeCategoria(servico.idcategoria) }}</p>
+
+            <p class="preco">
+              {{ servico.preco | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+            </p>
+
+            <button
+              type="button"
+              (click)="adicionarAoCarrinho(servico)"
+            >
+              Adicionar ao carrinho
+            </button>
+          </div>
+        </article>
+      } @empty {
+        <p class="sem-servicos">
+          {{ carregando ? 'Carregando serviços...' : (erroServicos || 'Nenhum serviço encontrado.') }}
+        </p>
+      }
+    </div>
+  }
 </section>

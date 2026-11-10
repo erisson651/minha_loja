@@ -26,6 +26,19 @@ export class Catalogo {
     return this.http.get<any[]>('https://localhost:7258/api/Categorium');
   }
 
+  cadastrarServico(servico: {
+    idcategoria: number;
+    item1: string;
+    descricaoItem: string;
+    preco: number;
+  }): Observable<{ iditem: number }> {
+    return this.http.post<{ iditem: number }>(this.itemServiceUrl, {
+      ...servico,
+      tipoItem: 'S',
+      ativoProdutoServico: 'S'
+    });
+  }
+
   buscarItemPorId(id: number): Observable<any> {
     return this.http.get<any>(`${this.itemServiceUrl}/${id}`);
   }
