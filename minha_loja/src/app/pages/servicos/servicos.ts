@@ -38,7 +38,8 @@ export class Servicos {
   }
 
   get nomesCategorias(): string[] {
-    return [...new Set(this.categorias.map(categoria => categoria.categoria))];
+    const nomes = this.servicos.map(servico => this.nomeCategoria(servico.idcategoria));
+    return [...new Set(nomes.filter(Boolean))];
   }
 
   nomeCategoria(id: number): string {
