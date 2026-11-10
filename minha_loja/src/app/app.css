@@ -1,80 +1,51 @@
-
 .pagina {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #fff8f5;
-  color: #493b3b;
-  font-family: Arial, sans-serif;
+  background: var(--spa-fundo);
+  color: var(--spa-texto);
+  font: 1rem/1.55 system-ui, sans-serif;
 }
 
 .cabecalho {
-  background: #a65d70;
-  color: white;
-  padding: 24px 5%;
+  background: var(--spa-papel);
+  border-bottom: 1px solid var(--spa-linha);
+  padding: 1.4rem max(1rem, 5vw) 0.8rem;
 }
 
-.marca {
-  text-align: center;
-}
-
-.marca h1 {
-  margin: 0;
-  font-size: 30px;
-}
-
-.marca p {
-  margin-bottom: 20px;
-}
+.marca { text-align: center; }
+.marca h1 { margin: 0; font-size: clamp(1.7rem, 5vw, 2.5rem); font-weight: 500; }
+.marca p { margin: .15rem 0 1rem; color: #50675e; }
 
 .menu {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 12px;
+  gap: .3rem;
 }
 
 .menu a {
-  color: white;
+  color: var(--spa-verde);
   text-decoration: none;
-  padding: 10px 14px;
-  border-radius: 6px;
+  font-weight: 600;
+  padding: .5rem .8rem;
+  border-radius: 2rem;
 }
 
-.menu a:hover {
-  background: #854456;
-}
+.menu a:hover, .menu a.ativo { background: #e3ebe0; }
 
 .conteudo {
   flex: 1;
-  width: 90%;
-  max-width: 1100px;
+  width: min(92%, 1160px);
   margin: 0 auto;
-  padding: 35px 0;
+  padding: clamp(1.2rem, 4vw, 3rem) 0;
 }
 
 .rodape {
-  background: #493b3b;
-  color: white;
+  background: #263f36;
+  color: #f7f5ee;
   text-align: center;
-  padding: 18px;
+  padding: 1.5rem 1rem;
 }
 
-.rodape p {
-  margin: 5px;
-}
-
-@media (max-width: 600px) {
-  .marca h1 {
-    font-size: 24px;
-  }
-
-  .menu {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .menu a {
-    text-align: center;
-  }
-}
+.rodape p { margin: .2rem; }

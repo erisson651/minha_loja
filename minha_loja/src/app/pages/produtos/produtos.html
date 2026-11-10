@@ -15,8 +15,9 @@
 
     <select [(ngModel)]="categoriaSelecionada">
       <option value="Todas">Todas as categorias</option>
-      <option value="Cuidados com a pele">Cuidados com a pele</option>
-      <option value="Cuidados com os cabelos">Cuidados com os cabelos</option>
+      @for (categoria of categorias; track categoria) {
+        <option [value]="categoria">{{ categoria }}</option>
+      }
     </select>
   </div>
 
@@ -50,7 +51,7 @@
 
           <button
             type="button"
-            [disabled]="produto.estoque === 0"
+            [disabled]="produto.estoque <= 0"
             (click)="adicionarAoCarrinho(produto.id)"
           >
             Adicionar ao carrinho
@@ -59,7 +60,7 @@
       </article>
     } @empty {
       <p class="sem-produtos">
-        Nenhum produto encontrado com esses filtros.
+        {{ carregando ? 'Carregando produtos...' : 'Nenhum produto encontrado.' }}
       </p>
     }
   </div>

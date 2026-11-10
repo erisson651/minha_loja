@@ -1,7 +1,7 @@
 
 .catalogo h2 {
   margin-bottom: 8px;
-  color: #854456;
+  color: #25483d;
   font-size: 30px;
 }
 
@@ -52,7 +52,7 @@
   justify-content: center;
   height: 130px;
   background: #f2dfe5;
-  color: #854456;
+  color: #25483d;
   font-size: 18px;
   font-weight: bold;
 }
@@ -63,7 +63,7 @@
 
 .informacoes h3 {
   margin-top: 0;
-  color: #493b3b;
+  color: #243a33;
 }
 
 .categoria {
@@ -72,7 +72,7 @@
 }
 
 .preco {
-  color: #854456;
+  color: #25483d;
   font-size: 23px;
   font-weight: bold;
 }
@@ -87,14 +87,14 @@
   padding: 12px;
   border: none;
   border-radius: 7px;
-  background: #a65d70;
+  background: #31564a;
   color: white;
   font-size: 14px;
   cursor: pointer;
 }
 
 .produto button:hover {
-  background: #854456;
+  background: #25483d;
 }
 
 .produto button:disabled {
@@ -105,7 +105,7 @@
 .sem-produtos {
   padding: 20px;
   text-align: center;
-  color: #854456;
+  color: #25483d;
 }
 
 @media (max-width: 600px) {

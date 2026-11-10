@@ -1,7 +1,20 @@
 
+<section class="boas-vindas">
+  <div>
+    <p class="selo">ESTÉTICA &amp; BEM-ESTAR</p>
+    <h2>Um tempo só seu.</h2>
+    <p>Descubra tratamentos e produtos para cuidar de você no seu ritmo.</p>
+    <div class="acoes-inicio">
+      <a routerLink="/servicos">Conhecer serviços</a>
+      <a routerLink="/produtos">Ver produtos</a>
+    </div>
+  </div>
+  <div class="ilustracao-spa" aria-hidden="true"><span>✿</span></div>
+</section>
+
 <section class="catalogo">
 
-  <h1>Estética & Bem-Estar</h1>
+  <h2>Catálogo da loja</h2>
 
   <p class="subtitulo">
     Conheça nossos produtos e serviços.
@@ -14,7 +27,7 @@
       type="text"
       [(ngModel)]="pesquisa"
       (input)="filtrarItens()"
-      placeholder="Pesquisar produto pelo nome..."
+      placeholder="Pesquisar por nome…"
     >
 
     <select
@@ -23,12 +36,9 @@
     >
       <option value="">Todas as categorias</option>
 
-      <option
-        *ngFor="let item of itens"
-        [value]="item.iditemNavigation?.idcategoriaNavigation?.categoria"
-      >
-        {{ item.iditemNavigation?.idcategoriaNavigation?.categoria }}
-      </option>
+      @for (categoria of categorias; track categoria.idcategoria) {
+        <option [value]="categoria.idcategoria">{{ categoria.categoria }}</option>
+      }
     </select>
 
     <select
@@ -60,7 +70,7 @@
 
   </div>
 
-  <p>Quantidade de itens recebidos: {{ itensFiltrados.length }}</p>
+  <p>Itens encontrados: {{ itensFiltrados.length }}</p>
 
   <p *ngIf="mensagem">
     {{ mensagem }}
@@ -114,7 +124,7 @@
   <!-- Mensagem quando não encontrar produtos -->
   <ng-template #semItens>
     <p *ngIf="!mensagem">
-      Nenhum item encontrado no catálogo.
+      {{ carregando ? 'Carregando catálogo...' : 'Nenhum item encontrado no catálogo.' }}
     </p>
   </ng-template>
 

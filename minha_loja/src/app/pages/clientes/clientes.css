@@ -6,7 +6,7 @@
 
 .cadastro h2 {
   margin-bottom: 8px;
-  color: #854456;
+  color: #25483d;
   font-size: 30px;
 }
 
@@ -26,7 +26,7 @@ fieldset {
 
 legend {
   padding: 0 10px;
-  color: #854456;
+  color: #25483d;
   font-size: 18px;
   font-weight: bold;
 }
@@ -41,7 +41,7 @@ legend {
   display: flex;
   flex-direction: column;
   gap: 7px;
-  color: #493b3b;
+  color: #243a33;
   font-size: 14px;
   font-weight: 600;
 }
@@ -60,7 +60,7 @@ legend {
 .campos input:focus,
 .campos select:focus {
   outline: 2px solid #d9a5b4;
-  border-color: #a65d70;
+  border-color: #31564a;
 }
 
 .acoes {
@@ -75,24 +75,24 @@ legend {
   padding: 12px 20px;
   border: none;
   border-radius: 7px;
-  background: #a65d70;
+  background: #31564a;
   color: white;
   font-size: 14px;
   cursor: pointer;
 }
 
 .acoes button:hover {
-  background: #854456;
+  background: #25483d;
 }
 
 .acoes .secundario {
-  border: 1px solid #a65d70;
+  border: 1px solid #31564a;
   background: white;
-  color: #854456;
+  color: #25483d;
 }
 
 .acoes a {
-  color: #854456;
+  color: #25483d;
   text-decoration: none;
 }
 
@@ -104,7 +104,7 @@ legend {
   padding: 12px;
   border-radius: 7px;
   background: #f8e9ee;
-  color: #854456;
+  color: #25483d;
 }
 
 @media (max-width: 600px) {

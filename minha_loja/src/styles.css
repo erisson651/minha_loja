@@ -1,1 +1,17 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  color-scheme: light;
+  --spa-fundo: #f8f5ee;
+  --spa-papel: #fffdf9;
+  --spa-texto: #243a33;
+  --spa-verde: #31564a;
+  --spa-linha: #deded1;
+  --spa-sombra: 0 12px 32px #243a3310;
+  --spa-titulo: Georgia, 'Times New Roman', serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--spa-fundo); }
+h1, h2, h3 { font-family: var(--spa-titulo); }
+button, input, select, textarea { font: inherit; }
+button:not(:disabled) { cursor: pointer; }
+:focus-visible { outline: 3px solid #94704a; outline-offset: 3px; }

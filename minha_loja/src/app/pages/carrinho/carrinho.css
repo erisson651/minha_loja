@@ -6,7 +6,7 @@
 
 .carrinho h2 {
   margin-bottom: 8px;
-  color: #854456;
+  color: #25483d;
   font-size: 30px;
 }
 
@@ -41,7 +41,7 @@
   min-height: 150px;
   border-radius: 9px;
   background: #f2dfe5;
-  color: #854456;
+  color: #25483d;
   font-weight: bold;
 }
 
@@ -52,7 +52,7 @@
 
 .detalhes-item h3 {
   margin-top: 0;
-  color: #493b3b;
+  color: #243a33;
   font-size: 20px;
 }
 
@@ -74,7 +74,7 @@
   border: 1px solid #dfc5cc;
   border-radius: 7px;
   background: #fff5f7;
-  color: #854456;
+  color: #25483d;
   font-size: 20px;
   cursor: pointer;
 }
@@ -95,17 +95,17 @@
 }
 
 .subtotal {
-  color: #854456;
+  color: #25483d;
   font-size: 17px;
   font-weight: bold;
 }
 
 .remover {
   padding: 8px 12px;
-  border: 1px solid #a65d70;
+  border: 1px solid #31564a;
   border-radius: 7px;
   background: white;
-  color: #854456;
+  color: #25483d;
   cursor: pointer;
 }
 
@@ -131,7 +131,7 @@
 }
 
 .resumo strong {
-  color: #854456;
+  color: #25483d;
   font-size: 28px;
 }
 
@@ -139,7 +139,7 @@
   padding: 13px 24px;
   border: none;
   border-radius: 7px;
-  background: #a65d70;
+  background: #31564a;
   color: white;
   font-size: 15px;
   font-weight: bold;
@@ -147,7 +147,7 @@
 }
 
 .finalizar:hover {
-  background: #854456;
+  background: #25483d;
 }
 
 .carrinho-vazio {
@@ -158,7 +158,7 @@
 }
 
 .carrinho-vazio h3 {
-  color: #854456;
+  color: #25483d;
 }
 
 .carrinho-vazio p {
@@ -170,13 +170,13 @@
   margin-top: 10px;
   padding: 12px 20px;
   border-radius: 7px;
-  background: #a65d70;
+  background: #31564a;
   color: white;
   text-decoration: none;
 }
 
 .carrinho-vazio a:hover {
-  background: #854456;
+  background: #25483d;
 }
 
 @media (max-width: 600px) {
@@ -210,7 +210,7 @@
 .cliente-compra {
   margin-bottom: 1.5rem;
   padding: 1rem;
-  border: 1px solid #ded5e0;
+  border: 1px solid #deded1;
   border-radius: 0.75rem;
 }
 

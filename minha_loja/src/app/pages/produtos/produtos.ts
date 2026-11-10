@@ -1,7 +1,10 @@
 
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, afterNextRender } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CurrencyPipe } from '@angular/common';
+import { forkJoin } from 'rxjs';
+import { Catalogo } from '../../services/catalogo';
+import { AdministracaoService } from '../../services/administracao';
 import { CarrinhoService } from '../../services/carrinho';
 @Component({
   selector: 'app-produtos',
@@ -15,34 +18,50 @@ export class Produtos {
   categoriaSelecionada: string = 'Todas';
   mensagem: string = '';
 
-  constructor(private carrinhoService: CarrinhoService) {}
+  produtos: { id: number; nome: string; descricao: string; categoria: string; preco: number; estoque: number }[] = [];
+  carregando = true;
 
-  produtos = [
-    {
-      id: 1,
-      nome: 'Hidratante Facial',
-      descricao: 'Hidratação diária para a pele.',
-      categoria: 'Cuidados com a pele',
-      preco: 49.90,
-      estoque: 15
-    },
-    {
-      id: 2,
-      nome: 'Protetor Solar',
-      descricao: 'Proteção para o cuidado diário da pele.',
-      categoria: 'Cuidados com a pele',
-      preco: 59.90,
-      estoque: 20
-    },
-    {
-      id: 3,
-      nome: 'Shampoo Nutritivo',
-      descricao: 'Limpeza e nutrição para os cabelos.',
-      categoria: 'Cuidados com os cabelos',
-      preco: 34.90,
-      estoque: 10
-    }
-  ];
+  constructor(
+    private carrinhoService: CarrinhoService,
+    private catalogo: Catalogo,
+    private api: AdministracaoService,
+    private cdr: ChangeDetectorRef
+  ) {
+    afterNextRender(() => this.carregarProdutos());
+  }
+
+  private carregarProdutos(): void {
+    forkJoin({
+      produtos: this.catalogo.listarItens(),
+      categorias: this.catalogo.listarCategorias(),
+      estoque: this.api.listarEstoque()
+    }).subscribe({
+      next: ({ produtos, categorias, estoque }) => {
+        this.produtos = produtos
+          .filter(produto => produto.iditemNavigation?.ativoProdutoServico === 'S')
+          .map(produto => ({
+            id: produto.iditem,
+            nome: produto.iditemNavigation.item1,
+            descricao: produto.iditemNavigation.descricaoItem,
+            categoria: categorias.find(categoria =>
+              categoria.idcategoria === produto.iditemNavigation.idcategoria)?.categoria ?? '',
+            preco: Number(produto.precoVenda),
+            estoque: estoque.find(item => item.iditem === produto.iditem)?.quantidadeEstoque ?? 0
+          }));
+        this.carregando = false;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.mensagem = 'Não foi possível consultar os produtos, categorias ou estoque.';
+        this.carregando = false;
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  get categorias(): string[] {
+    return [...new Set(this.produtos.map(produto => produto.categoria).filter(Boolean))];
+  }
 
   get produtosFiltrados() {
     return this.produtos.filter(produto => {
@@ -61,7 +80,7 @@ export class Produtos {
   adicionarAoCarrinho(id: number) {
     const produto = this.produtos.find(item => item.id === id);
 
-    if (!produto) {
+    if (!produto || produto.estoque <= 0) {
       return;
     }
 

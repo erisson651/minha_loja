@@ -1,6 +1,8 @@
 
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef, afterNextRender } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { forkJoin } from 'rxjs';
+import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Catalogo } from '../../services/catalogo';
 import { CarrinhoService } from '../../services/carrinho';
@@ -8,14 +10,17 @@ import { CarrinhoService } from '../../services/carrinho';
 @Component({
   selector: 'app-inicio',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './inicio.html',
   styleUrl: './inicio.css',
 })
-export class Inicio implements OnInit {
+export class Inicio {
 
   itens: any[] = [];
   itensFiltrados: any[] = [];
+
+  categorias: { idcategoria: number; categoria: string }[] = [];
+  carregando = true;
 
   mensagem = '';
 
@@ -29,7 +34,9 @@ export class Inicio implements OnInit {
     private catalogo: Catalogo,
     private cdr: ChangeDetectorRef,
     private carrinho: CarrinhoService
-  ) {}
+  ) {
+    afterNextRender(() => this.carregarCatalogo());
+  }
 
   filtrarItens(): void {
     const pesquisa = this.pesquisa.toLowerCase().trim();
@@ -38,7 +45,7 @@ export class Inicio implements OnInit {
       const nome = item.iditemNavigation?.item1?.toLowerCase() || '';
 
       const categoria =
-        item.iditemNavigation?.idcategoriaNavigation?.categoria || '';
+        String(item.iditemNavigation?.idcategoria ?? '');
 
       const tipo = item.iditemNavigation?.tipoItem || '';
 
@@ -57,18 +64,25 @@ export class Inicio implements OnInit {
   }
 
   buscarPorId(): void {
-    if (!this.idConsulta) {
+    if (!this.idConsulta || !Number.isInteger(this.idConsulta) || this.idConsulta < 1) {
       this.mensagem = 'Digite um ID válido.';
       return;
     }
 
     this.catalogo.buscarItemPorId(this.idConsulta).subscribe({
       next: (dados) => {
-        console.log('Item encontrado:', dados);
+        if (dados.ativoProdutoServico !== 'S') {
+          this.itensFiltrados = [];
+          this.mensagem = 'Este item está indisponível.';
+          this.cdr.markForCheck();
+          return;
+        }
+
+        const produto = this.itens.find(item => item.iditem === dados.iditem);
 
         const itemEncontrado = {
           iditem: dados.iditem,
-          precoVenda: dados.preco,
+          precoVenda: produto?.precoVenda ?? dados.preco,
           iditemNavigation: dados
         };
 
@@ -83,7 +97,7 @@ export class Inicio implements OnInit {
         console.error('Erro ao consultar item:', erro);
 
         this.itensFiltrados = [];
-        this.mensagem = 'Item não encontrado.';
+        this.mensagem = erro.status === 404 ? 'Item não encontrado.' : 'Não foi possível consultar o item.';
 
         this.cdr.detectChanges();
       }
@@ -102,27 +116,30 @@ export class Inicio implements OnInit {
     this.mensagem = `${produto.nome} adicionado ao carrinho!`;
   }
 
-  ngOnInit(): void {
-    this.catalogo.listarItens().subscribe({
-      next: (dados) => {
-
-        console.log('Dados recebidos da API:', dados);
-
-        this.itens = dados.filter(
-          item => item.iditemNavigation?.ativoProdutoServico === 'S'
-        );
-
-        this.itensFiltrados = [...this.itens];
-
-        this.cdr.detectChanges();
-
-        console.log('Quantidade dentro do componente:', this.itens.length);
+  private carregarCatalogo(): void {
+    forkJoin({
+      produtos: this.catalogo.listarItens(),
+      servicos: this.catalogo.listarServicos(),
+      categorias: this.catalogo.listarCategorias()
+    }).subscribe({
+      next: ({ produtos, servicos, categorias }) => {
+        this.categorias = categorias;
+        this.itens = [
+          ...produtos,
+          ...servicos.map(servico => ({
+            iditem: servico.iditem,
+            precoVenda: servico.preco,
+            iditemNavigation: servico
+          }))
+        ].filter(item => item.iditemNavigation?.ativoProdutoServico === 'S');
+        this.filtrarItens();
+        this.carregando = false;
+        this.cdr.markForCheck();
       },
-
-      error: (erro) => {
-        console.error('Erro ao carregar catálogo:', erro);
-        this.mensagem = 'Não foi possível carregar os itens da loja.';
-        this.cdr.detectChanges();
+      error: () => {
+        this.mensagem = 'Não foi possível carregar o catálogo.';
+        this.carregando = false;
+        this.cdr.markForCheck();
       }
     });
   }

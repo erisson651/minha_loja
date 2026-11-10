@@ -72,6 +72,36 @@
   </section>
 
   <section>
+    <h3>Categorias</h3>
+    <form (ngSubmit)="consultarCategoria(idCategoria)">
+      <label>ID da categoria <input name="idCategoria" type="number" min="1" [(ngModel)]="idCategoria"></label>
+      <button type="submit" [disabled]="operandoCategoria">Consultar</button>
+    </form>
+    <form (ngSubmit)="salvarCategoria()">
+      <label>{{ categoria.idcategoria ? 'Editar categoria nº ' + categoria.idcategoria : 'Nome da nova categoria' }}
+        <input name="nomeCategoria" required [(ngModel)]="categoria.categoria">
+      </label>
+      <button type="submit" [disabled]="operandoCategoria">{{ categoria.idcategoria ? 'Salvar alterações' : 'Cadastrar' }}</button>
+      @if (categoria.idcategoria) {
+        <button type="button" (click)="limparCategoria()" [disabled]="operandoCategoria">Novo cadastro</button>
+        <button type="button" (click)="excluirCategoria()" [disabled]="operandoCategoria">Excluir categoria</button>
+      }
+    </form>
+    <p role="status">{{ mensagemCategoria || erros['categorias'] }}</p>
+    <ul class="lista-categorias">
+      @for (registro of categorias; track registro.idcategoria) {
+        <li>
+          <button type="button" (click)="consultarCategoria(registro.idcategoria)" [disabled]="operandoCategoria">
+            {{ registro.idcategoria }} · {{ registro.categoria }}
+          </button>
+        </li>
+      } @empty {
+        <li>Nenhuma categoria para exibir.</li>
+      }
+    </ul>
+  </section>
+
+  <section>
     <h3>Estoque</h3>
     <label>Filtrar por ID <input type="number" min="1" [(ngModel)]="idEstoque"></label>
     <ul>

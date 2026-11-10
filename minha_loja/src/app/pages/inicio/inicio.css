@@ -1,0 +1,38 @@
+
+.boas-vindas {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1.45fr 1fr;
+  align-items: center;
+  gap: 1rem;
+  padding: clamp(1.5rem, 6vw, 4.5rem);
+  margin-bottom: 2rem;
+  border-radius: 1.6rem;
+  background: #e3e9db;
+  color: #263f36;
+}
+
+.boas-vindas h2 { font-size: clamp(2.6rem, 8vw, 5rem); font-weight: 400; line-height: 1; margin: .5rem 0; }
+.boas-vindas p { max-width: 30rem; }
+.selo { font-size: .72rem; font-weight: 700; letter-spacing: .18em; }
+.acoes-inicio { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 1.5rem; }
+.acoes-inicio a { padding: .65rem 1.1rem; border-radius: 2rem; background: #31564a; color: white; text-decoration: none; }
+.acoes-inicio a + a { background: var(--spa-papel); color: #31564a; }
+.ilustracao-spa {
+  display: grid;
+  place-items: center;
+  width: min(100%, 18rem);
+  aspect-ratio: 1;
+  justify-self: center;
+  border-radius: 50% 50% 46% 46%;
+  background: radial-gradient(circle at 50% 44%, #f3dfc3, #c9d8c4 67%, #abbda9);
+  color: #456b57;
+  font-size: clamp(4rem, 13vw, 9rem);
+}
+
+@media (max-width: 600px) {
+  .boas-vindas { grid-template-columns: 1fr; }
+  .ilustracao-spa { display: none; }
+}

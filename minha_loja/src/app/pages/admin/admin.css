@@ -7,7 +7,7 @@
 .painel section {
   margin-top: 1.5rem;
   padding: 1rem;
-  border: 1px solid #ded5e0;
+  border: 1px solid #deded1;
   border-radius: 0.75rem;
 }
 
@@ -26,3 +26,27 @@
 .painel input, .painel select, .painel button {
   padding: 0.5rem;
 }
+
+.painel section {
+  background: var(--spa-papel);
+  box-shadow: var(--spa-sombra);
+}
+
+.painel form + form { margin-top: 1rem; }
+
+.lista-categorias {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+.painel button {
+  background: var(--spa-verde);
+  color: white;
+  border: 0;
+  border-radius: .5rem;
+}
+
+.painel button:disabled { opacity: .6; }

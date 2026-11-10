@@ -3,6 +3,11 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 
+export interface Categoria {
+  idcategoria: number;
+  categoria: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -22,8 +27,24 @@ export class Catalogo {
     );
   }
 
-  listarCategorias(): Observable<any[]> {
-    return this.http.get<any[]>('https://localhost:7258/api/Categorium');
+  private categoriasUrl = 'https://localhost:7258/api/Categorium';
+
+  listarCategorias() {
+    return this.http.get<Categoria[]>(this.categoriasUrl);
+  }
+
+  buscarCategoria(id: number) {
+    return this.http.get<Categoria>(this.categoriasUrl + '/' + id);
+  }
+
+  salvarCategoria(categoria: Categoria) {
+    return categoria.idcategoria
+      ? this.http.put<Categoria | null>(this.categoriasUrl + '/' + categoria.idcategoria, categoria)
+      : this.http.post<Categoria | null>(this.categoriasUrl, categoria);
+  }
+
+  excluirCategoria(id: number) {
+    return this.http.delete<void>(this.categoriasUrl + '/' + id);
   }
 
   cadastrarServico(servico: {

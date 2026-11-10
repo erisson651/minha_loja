@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Observable, finalize } from 'rxjs';
 
 import { AdministracaoService, Cliente, Entrada, Estoque, PedidoApi } from '../../services/administracao';
-import { Catalogo } from '../../services/catalogo';
+import { Catalogo, Categoria } from '../../services/catalogo';
 
 @Component({
   imports: [FormsModule, CurrencyPipe],
@@ -14,6 +14,11 @@ import { Catalogo } from '../../services/catalogo';
 })
 export class Admin {
   clientes: Cliente[] = [];
+  categorias: Categoria[] = [];
+  categoria = { idcategoria: 0, categoria: '' };
+  idCategoria: number | null = null;
+  mensagemCategoria = '';
+  operandoCategoria = false;
   pedidos: PedidoApi[] = [];
   estoque: Estoque[] = [];
 
@@ -49,6 +54,7 @@ export class Admin {
       this.consultar('produtos', this.catalogo.listarItens(), dados => this.produtos = dados.length);
       this.consultar('serviços', this.catalogo.listarServicos(), dados => this.servicos = dados.length);
       this.carregarEstoque();
+      this.carregarCategorias();
     });
   }
 
@@ -145,6 +151,82 @@ export class Admin {
       error: erro => {
         this.mensagemEntrada = typeof erro.error === 'string' && erro.error
           ? erro.error : 'Não foi possível registrar a entrada.';
+      }
+    });
+  }
+
+  consultarCategoria(id: number | null): void {
+    if (!id || !Number.isSafeInteger(id) || id <= 0) {
+      this.mensagemCategoria = 'Informe um ID de categoria válido.';
+      return;
+    }
+
+    this.alterarCategoria(this.catalogo.buscarCategoria(id), categoria => {
+      this.categoria = categoria;
+      this.idCategoria = id;
+    });
+  }
+
+  salvarCategoria(): void {
+    const categoria = this.categoria.categoria.trim();
+
+    if (!categoria) {
+      this.mensagemCategoria = 'Informe o nome da categoria.';
+      return;
+    }
+
+    const editando = this.categoria.idcategoria > 0;
+    this.alterarCategoria(
+      this.catalogo.salvarCategoria({ ...this.categoria, categoria }),
+      () => {
+        this.mensagemCategoria = editando ? 'Categoria atualizada.' : 'Categoria cadastrada.';
+        this.limparCategoria();
+        this.carregarCategorias();
+      }
+    );
+  }
+
+  excluirCategoria(): void {
+    const id = this.categoria.idcategoria;
+    if (!id || this.operandoCategoria ||
+        !window.confirm('Excluir definitivamente a categoria selecionada?')) {
+      return;
+    }
+
+    this.alterarCategoria(this.catalogo.excluirCategoria(id), () => {
+      this.mensagemCategoria = 'Categoria excluída.';
+      this.limparCategoria();
+      this.carregarCategorias();
+    }, 'Não foi possível excluir. Confira se a categoria está vinculada a algum item.');
+  }
+
+  limparCategoria(): void {
+    this.categoria = { idcategoria: 0, categoria: '' };
+    this.idCategoria = null;
+  }
+
+  private carregarCategorias(): void {
+    this.consultar('categorias', this.catalogo.listarCategorias(), dados => this.categorias = dados);
+  }
+
+  private alterarCategoria<T>(
+    consulta: Observable<T>,
+    receber: (dados: T) => void,
+    mensagemErro = 'Não foi possível concluir a operação da categoria.'
+  ): void {
+    if (this.operandoCategoria) {
+      return;
+    }
+
+    this.operandoCategoria = true;
+    this.mensagemCategoria = '';
+    consulta.pipe(finalize(() => {
+      this.operandoCategoria = false;
+      this.cdr.markForCheck();
+    })).subscribe({
+      next: receber,
+      error: erro => {
+        this.mensagemCategoria = erro.status === 404 ? 'Categoria não encontrada.' : mensagemErro;
       }
     });
   }
