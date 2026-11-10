@@ -6,6 +6,19 @@
     Confira seus itens antes de finalizar a compra.
   </p>
 
+  <section class="cliente-compra" aria-labelledby="titulo-cliente-compra">
+    <h3 id="titulo-cliente-compra">Cliente da compra</h3>
+    @if (carregandoCliente) {
+      <p role="status">Consultando cliente...</p>
+    } @else if (cliente; as comprador) {
+      <p><strong>{{ comprador.nome }}</strong> · Cliente nº {{ comprador.idPessoa }}</p>
+      <a routerLink="/clientes">Cadastrar outro cliente</a>
+    } @else {
+      <p role="status">{{ erroCliente || 'Nenhum cliente identificado nesta aba.' }}</p>
+      <a routerLink="/clientes">Ir para o cadastro</a>
+    }
+  </section>
+
   @if (itens.length > 0) {
     <div class="lista-itens">
       @for (item of itens; track item.id) {
@@ -73,7 +86,7 @@
         type="button"
         class="finalizar"
         (click)="finalizarCompra()"
-        [disabled]="finalizando"
+        [disabled]="finalizando || !cliente"
       >
         {{ finalizando ? 'Finalizando...' : 'Finalizar compra' }}
       </button>

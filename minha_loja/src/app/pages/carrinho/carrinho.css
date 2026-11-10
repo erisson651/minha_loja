@@ -206,3 +206,14 @@
     width: 100%;
   }
 }
+
+.cliente-compra {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border: 1px solid #ded5e0;
+  border-radius: 0.75rem;
+}
+
+.cliente-compra h3 {
+  margin-top: 0;
+}

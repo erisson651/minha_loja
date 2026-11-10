@@ -1,8 +1,9 @@
 
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, afterNextRender } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CarrinhoService } from '../../services/carrinho';
+import { AdministracaoService, Cliente } from '../../services/administracao';
 import { AtendimentoService } from '../../services/atendimento';
 
 @Component({
@@ -15,12 +16,43 @@ import { AtendimentoService } from '../../services/atendimento';
 export class Carrinho {
   mensagem = '';
   finalizando = false;
+  cliente: Cliente | null = null;
+  carregandoCliente = true;
+  erroCliente = '';
 
   constructor(
     public carrinhoService: CarrinhoService,
     private atendimento: AtendimentoService,
-    private cdr: ChangeDetectorRef
-  ) {}
+    private cdr: ChangeDetectorRef,
+    private administracao: AdministracaoService
+  ) {
+    afterNextRender(() => this.carregarCliente());
+  }
+
+  private carregarCliente(): void {
+    const idCliente = Number(sessionStorage.getItem('idCliente'));
+
+    if (!Number.isSafeInteger(idCliente) || idCliente <= 0) {
+      this.carregandoCliente = false;
+      this.cdr.markForCheck();
+      return;
+    }
+
+    this.administracao.buscarCliente(idCliente).subscribe({
+      next: cliente => {
+        this.cliente = cliente;
+        this.carregandoCliente = false;
+        this.cdr.markForCheck();
+      },
+      error: erro => {
+        this.erroCliente = erro.status === 404
+          ? 'Cliente não encontrado. Faça seu cadastro.'
+          : 'Não foi possível consultar o cliente da compra.';
+        this.carregandoCliente = false;
+        this.cdr.markForCheck();
+      }
+    });
+  }
 
   get itens() {
     return this.carrinhoService.itens;
@@ -52,16 +84,15 @@ export class Carrinho {
       return;
     }
 
-    const idCliente = Number(sessionStorage.getItem('idCliente'));
-    if (!Number.isSafeInteger(idCliente) || idCliente <= 0) {
-      this.mensagem = 'Cliente não identificado. Faça seu cadastro nesta aba.';
+    if (!this.cliente) {
+      this.mensagem = 'Identifique o cliente antes de finalizar.';
       return;
     }
 
     this.finalizando = true;
     this.mensagem = '';
     this.atendimento.finalizarCompra({
-      idpessoas: idCliente,
+      idpessoas: this.cliente.idPessoa,
       idfuncionario: 1,
       itens: this.itens.map(item => ({
         iditem: item.id,
