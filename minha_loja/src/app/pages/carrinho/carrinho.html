@@ -26,7 +26,7 @@
               <button
                 type="button"
                 (click)="diminuirQuantidade(item.id)"
-                [disabled]="item.quantidade === 1"
+                [disabled]="finalizando || item.quantidade === 1"
                 aria-label="Diminuir quantidade"
               >
                 −
@@ -37,6 +37,7 @@
               <button
                 type="button"
                 (click)="aumentarQuantidade(item.id)"
+                [disabled]="finalizando"
                 aria-label="Aumentar quantidade"
               >
                 +
@@ -52,6 +53,7 @@
               type="button"
               class="remover"
               (click)="removerItem(item.id)"
+              [disabled]="finalizando"
             >
               Remover item
             </button>
@@ -71,8 +73,9 @@
         type="button"
         class="finalizar"
         (click)="finalizarCompra()"
+        [disabled]="finalizando"
       >
-        Finalizar compra
+        {{ finalizando ? 'Finalizando...' : 'Finalizar compra' }}
       </button>
     </div>
   } @else {

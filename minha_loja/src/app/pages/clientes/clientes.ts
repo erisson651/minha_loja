@@ -1,5 +1,5 @@
 
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { ClientesService } from '../../services/clientes';
@@ -13,7 +13,10 @@ import { ClientesService } from '../../services/clientes';
 })
 export class Clientes {
 
-  constructor(private clientesService: ClientesService) {}
+  constructor(
+    private clientesService: ClientesService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   // Dados preenchidos pelo usuário no formulário
   cliente = {
@@ -75,6 +78,18 @@ export class Clientes {
       return;
     }
 
+    const complemento = [
+      this.cliente.rua.trim(),
+      this.cliente.bairro.trim(),
+      this.cliente.cidade.trim(),
+      this.cliente.uf.trim()
+    ].join(', ');
+
+    if (complemento.length > 45) {
+      this.mensagem = 'Rua, bairro, cidade e UF juntos devem caber em 45 caracteres.';
+      return;
+    }
+
     // Organiza os dados que serão enviados para a API
     const dadosCliente = {
       idPessoa: 0,
@@ -90,12 +105,7 @@ export class Clientes {
           idEndereco: 0,
           cep: this.cliente.cep.replace(/\D/g, ''),
           numero: this.cliente.numero.trim(),
-          complemento: [
-            this.cliente.rua.trim(),
-            this.cliente.bairro.trim(),
-            this.cliente.cidade.trim(),
-            this.cliente.uf.trim()
-          ].join(', ')
+          complemento
         }
       ]
     };
@@ -105,12 +115,20 @@ export class Clientes {
 
     // Envia os dados para a API C#
     this.clientesService.cadastrarCliente(dadosCliente).subscribe({
-      next: () => {
-        this.mensagem = 'Cliente cadastrado com sucesso!';
+      next: resposta => {
+        const idCliente = Number(resposta?.idPessoa ?? resposta?.idpessoas);
+        if (Number.isSafeInteger(idCliente) && idCliente > 0) {
+          sessionStorage.setItem('idCliente', String(idCliente));
+          this.mensagem = 'Cliente cadastrado com sucesso!';
+        } else {
+          sessionStorage.removeItem('idCliente');
+          this.mensagem = 'Cadastro salvo, mas a API não retornou o ID do cliente.';
+        }
 
         this.limparCampos();
 
         this.salvando = false;
+        this.cdr.markForCheck();
       },
 
       error: (erro: any) => {
@@ -130,6 +148,7 @@ export class Clientes {
         console.error('Erro ao cadastrar cliente:', erro);
 
         this.salvando = false;
+        this.cdr.markForCheck();
       }
     });
   }

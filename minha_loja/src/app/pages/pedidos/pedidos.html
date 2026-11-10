@@ -5,7 +5,11 @@
     Consulte os pedidos realizados na Estética &amp; Bem-Estar.
   </p>
 
-  @if (pedidos.length === 0) {
+  @if (carregando) {
+    <p role="status">Carregando pedidos...</p>
+  } @else if (mensagem) {
+    <p role="status">{{ mensagem }}</p>
+  } @else if (pedidos.length === 0) {
     <div class="vazio">
       <h3>Nenhum pedido encontrado</h3>
       <p>Quando você finalizar uma compra, o pedido aparecerá aqui.</p>
@@ -18,11 +22,11 @@
           <h3>Pedido nº {{ pedido.id }}</h3>
           <p>
             <strong>Data:</strong>
-            {{ pedido.data | date:'dd/MM/yyyy HH:mm' }}
+            {{ pedido.data | date:'dd/MM/yyyy' }}
           </p>
           <p><strong>Status:</strong> {{ pedido.status }}</p>
 
-          <h4>Produtos</h4>
+          <h4>Itens</h4>
           <ul>
             @for (item of pedido.itens; track item.id) {
               <li>
