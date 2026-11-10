@@ -35,12 +35,20 @@
     </label>
     <form (ngSubmit)="buscarPedido()">
       <label>ID do pedido <input name="pedido" type="number" min="1" [(ngModel)]="idPedido"></label>
-      <button type="submit">Ver detalhes</button>
+      <button type="submit" [disabled]="finalizandoPedido">Ver detalhes</button>
     </form>
     <p role="status">{{ erros['pedido'] }}</p>
+    <p role="status">{{ mensagemPedido }}</p>
     @if (pedido) {
       <h4>Pedido nº {{ pedido.idatendimento }}</h4>
-      <p>{{ pedido.dataAtendimento }} · {{ pedido.statusAtendimento }}</p>
+      <p>{{ pedido.dataAtendimento }} ·
+        {{ pedido.statusAtendimento === 'F' ? 'Finalizado' : pedido.statusAtendimento === 'A' ? 'Aberto' : pedido.statusAtendimento }}
+      </p>
+      @if (pedido.statusAtendimento === 'A') {
+        <button type="button" (click)="finalizarPedido(pedido)" [disabled]="finalizandoPedido">
+          {{ finalizandoPedido ? 'Finalizando...' : 'Finalizar pedido' }}
+        </button>
+      }
       <ul>
         @for (item of pedido.atendimentoitems; track item.iditem) {
           <li>{{ item.iditemNavigation?.item1 || item.iditem }} · {{ item.quantidadeItens }} ×

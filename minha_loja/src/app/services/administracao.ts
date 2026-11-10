@@ -59,6 +59,12 @@ export class AdministracaoService {
     return this.http.get<PedidoApi>(this.api + '/Atendimento/' + id);
   }
 
+  finalizarPedido(id: number) {
+    return this.http.put<void>(this.api + '/Atendimento/' + id + '/status', {
+      statusAtendimento: 'F'
+    });
+  }
+
   listarEstoque() {
     return this.http.get<Estoque[]>(this.api + '/Estoque');
   }

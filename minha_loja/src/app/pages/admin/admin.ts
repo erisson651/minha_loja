@@ -27,6 +27,8 @@ export class Admin {
   pedido: PedidoApi | null = null;
   erros: Record<string, string> = {};
   mensagemEntrada = '';
+  mensagemPedido = '';
+  finalizandoPedido = false;
   salvando = false;
   entrada: Entrada = {
     iditem: 0,
@@ -73,6 +75,7 @@ export class Admin {
   buscarPedido(): void {
     const id = this.idPedido ?? 0;
     this.pedido = null;
+    this.mensagemPedido = '';
 
     if (!Number.isInteger(id) || id <= 0) {
       this.erros['pedido'] = 'Informe um ID de pedido válido.';
@@ -80,6 +83,36 @@ export class Admin {
     }
 
     this.consultar('pedido', this.api.buscarPedido(id), dados => this.pedido = dados);
+  }
+
+  finalizarPedido(pedido: PedidoApi): void {
+    if (this.finalizandoPedido || pedido.statusAtendimento !== 'A') {
+      return;
+    }
+
+    this.finalizandoPedido = true;
+    this.mensagemPedido = '';
+    this.api.finalizarPedido(pedido.idatendimento).pipe(
+      finalize(() => {
+        this.finalizandoPedido = false;
+        this.cdr.markForCheck();
+      })
+    ).subscribe({
+      next: () => {
+        pedido.statusAtendimento = 'F';
+        const registro = this.pedidos.find(item => item.idatendimento === pedido.idatendimento);
+
+        if (registro) {
+          registro.statusAtendimento = 'F';
+        }
+
+        this.mensagemPedido = 'Pedido finalizado com sucesso.';
+      },
+      error: erro => {
+        this.mensagemPedido = erro.error?.mensagem
+          || 'Não foi possível finalizar o pedido.';
+      }
+    });
   }
 
   registrarEntrada(): void {
