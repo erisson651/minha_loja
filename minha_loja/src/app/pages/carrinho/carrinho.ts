@@ -1,6 +1,7 @@
 
 import { ChangeDetectorRef, Component, afterNextRender } from '@angular/core';
 import { CurrencyPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { CarrinhoService } from '../../services/carrinho';
 import { AdministracaoService, Cliente } from '../../services/administracao';
@@ -9,7 +10,7 @@ import { AtendimentoService } from '../../services/atendimento';
 @Component({
   selector: 'app-carrinho',
   standalone: true,
-  imports: [CurrencyPipe, RouterLink],
+  imports: [CurrencyPipe, FormsModule, RouterLink],
   templateUrl: './carrinho.html',
   styleUrl: './carrinho.css'
 })
@@ -17,6 +18,7 @@ export class Carrinho {
   mensagem = '';
   finalizando = false;
   cliente: Cliente | null = null;
+  clientes: Cliente[] = [];
   carregandoCliente = true;
   erroCliente = '';
 
@@ -26,32 +28,36 @@ export class Carrinho {
     private cdr: ChangeDetectorRef,
     private administracao: AdministracaoService
   ) {
-    afterNextRender(() => this.carregarCliente());
+    afterNextRender(() => this.carregarClientes());
   }
 
-  private carregarCliente(): void {
+  private carregarClientes(): void {
     const idCliente = Number(sessionStorage.getItem('idCliente'));
 
-    if (!Number.isSafeInteger(idCliente) || idCliente <= 0) {
-      this.carregandoCliente = false;
-      this.cdr.markForCheck();
-      return;
-    }
-
-    this.administracao.buscarCliente(idCliente).subscribe({
-      next: cliente => {
-        this.cliente = cliente;
+    this.administracao.listarClientes().subscribe({
+      next: clientes => {
+        this.clientes = clientes;
+        this.cliente = clientes.find(cliente => cliente.idPessoa === idCliente) ?? null;
         this.carregandoCliente = false;
         this.cdr.markForCheck();
       },
-      error: erro => {
-        this.erroCliente = erro.status === 404
-          ? 'Cliente não encontrado. Faça seu cadastro.'
-          : 'Não foi possível consultar o cliente da compra.';
+      error: () => {
+        this.erroCliente = 'Não foi possível carregar os clientes da API.';
         this.carregandoCliente = false;
         this.cdr.markForCheck();
       }
     });
+  }
+
+  selecionarCliente(id: number | null): void {
+    this.cliente = this.clientes.find(cliente => cliente.idPessoa === id) ?? null;
+    this.mensagem = '';
+
+    if (this.cliente) {
+      sessionStorage.setItem('idCliente', String(this.cliente.idPessoa));
+    } else {
+      sessionStorage.removeItem('idCliente');
+    }
   }
 
   get itens() {

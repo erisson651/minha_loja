@@ -9,14 +9,22 @@
   <section class="cliente-compra" aria-labelledby="titulo-cliente-compra">
     <h3 id="titulo-cliente-compra">Cliente da compra</h3>
     @if (carregandoCliente) {
-      <p role="status">Consultando cliente...</p>
-    } @else if (cliente; as comprador) {
-      <p><strong>{{ comprador.nome }}</strong> · Cliente nº {{ comprador.idPessoa }}</p>
-      <a routerLink="/clientes">Cadastrar outro cliente</a>
+      <p role="status">Carregando clientes...</p>
+    } @else if (erroCliente) {
+      <p role="status">{{ erroCliente }}</p>
+    } @else if (clientes.length) {
+      <label for="cliente-compra">Selecione o cliente</label>
+      <select id="cliente-compra" [ngModel]="cliente?.idPessoa ?? null"
+        (ngModelChange)="selecionarCliente($event)" [disabled]="finalizando">
+        <option [ngValue]="null">Selecione</option>
+        @for (comprador of clientes; track comprador.idPessoa) {
+          <option [ngValue]="comprador.idPessoa">{{ comprador.nome }} · nº {{ comprador.idPessoa }}</option>
+        }
+      </select>
     } @else {
-      <p role="status">{{ erroCliente || 'Nenhum cliente identificado nesta aba.' }}</p>
-      <a routerLink="/clientes">Ir para o cadastro</a>
+      <p role="status">Nenhum cliente cadastrado.</p>
     }
+    <p><a routerLink="/clientes">Cadastrar novo cliente</a></p>
   </section>
 
   @if (itens.length > 0) {
