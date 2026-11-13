@@ -32,6 +32,20 @@
   font-size: clamp(4rem, 13vw, 9rem);
 }
 
+.ilustracao-spa span {
+  line-height: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ilustracao-spa span {
+    animation: girar-flor 12s linear infinite;
+  }
+}
+
+@keyframes girar-flor {
+  to { transform: rotate(360deg); }
+}
+
 @media (max-width: 600px) {
   .boas-vindas { grid-template-columns: 1fr; }
   .ilustracao-spa { display: none; }
