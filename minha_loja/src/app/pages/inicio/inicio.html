@@ -12,6 +12,32 @@
   <div class="ilustracao-spa" aria-hidden="true"><span>✿</span></div>
 </section>
 
+@if (itens.length) {
+  <section class="vitrine" aria-labelledby="titulo-vitrine">
+    <div class="vitrine-cabecalho">
+      <h2 id="titulo-vitrine">Produtos e serviços disponíveis</h2>
+      @if (itens.length > 1) {
+        <div class="vitrine-controles">
+          <button type="button" (click)="moverCarrossel(-1)" aria-label="Item anterior" aria-controls="itens-vitrine">←</button>
+          <button type="button" (click)="carrosselPausado = !carrosselPausado" aria-controls="itens-vitrine">
+            {{ carrosselPausado ? 'Reproduzir' : 'Pausar' }}
+          </button>
+          <button type="button" (click)="moverCarrossel(1)" aria-label="Próximo item" aria-controls="itens-vitrine">→</button>
+        </div>
+      }
+    </div>
+    <div #carrossel id="itens-vitrine" class="vitrine-faixa" tabindex="0" role="region" aria-label="Itens do carrossel">
+      @for (item of itens; track item.iditem) {
+        <article class="vitrine-item">
+          <p class="vitrine-tipo">{{ item.iditemNavigation?.tipoItem === 'P' ? 'Produto' : 'Serviço' }}</p>
+          <h3>{{ item.iditemNavigation?.item1 }}</h3>
+          <p class="vitrine-preco">{{ item.precoVenda | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</p>
+        </article>
+      }
+    </div>
+  </section>
+}
+
 <section class="catalogo">
 
   <h2>Catálogo da loja</h2>

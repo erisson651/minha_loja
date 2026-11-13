@@ -1,5 +1,5 @@
 
-import { Component, ChangeDetectorRef, afterNextRender } from '@angular/core';
+import { Component, ChangeDetectorRef, DestroyRef, ElementRef, afterNextRender, viewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { forkJoin } from 'rxjs';
 import { RouterLink } from '@angular/router';
@@ -21,6 +21,8 @@ export class Inicio {
 
   categorias: { idcategoria: number; categoria: string }[] = [];
   carregando = true;
+  carrosselPausado = false;
+  private readonly carrossel = viewChild<ElementRef<HTMLDivElement>>('carrossel');
 
   mensagem = '';
 
@@ -33,9 +35,43 @@ export class Inicio {
   constructor(
     private catalogo: Catalogo,
     private cdr: ChangeDetectorRef,
-    private carrinho: CarrinhoService
+    private carrinho: CarrinhoService,
+    destroyRef: DestroyRef
   ) {
-    afterNextRender(() => this.carregarCatalogo());
+    afterNextRender(() => {
+      this.carregarCatalogo();
+      const movimentoReduzido = window.matchMedia('(prefers-reduced-motion: reduce)');
+      this.carrosselPausado = movimentoReduzido.matches;
+      this.cdr.markForCheck();
+
+      const intervalo = window.setInterval(() => {
+        const faixa = this.carrossel()?.nativeElement;
+        if (!this.carrosselPausado && faixa && !faixa.matches(':hover, :focus-within')) {
+          this.moverCarrossel(1);
+        }
+      }, 4500);
+      destroyRef.onDestroy(() => window.clearInterval(intervalo));
+    });
+  }
+
+  moverCarrossel(direcao: 1 | -1): void {
+    const faixa = this.carrossel()?.nativeElement;
+    if (!faixa) return;
+
+    const limite = faixa.scrollWidth - faixa.clientWidth;
+    if (limite <= 1) return;
+
+    const inicio = faixa.scrollLeft <= 1;
+    const fim = faixa.scrollLeft >= limite - 1;
+    if (direcao === 1 && fim) {
+      faixa.scrollTo({ left: 0 });
+    } else if (direcao === -1 && inicio) {
+      faixa.scrollTo({ left: limite });
+    } else {
+      const [primeiro, segundo] = Array.from(faixa.children) as HTMLElement[];
+      const passo = segundo ? segundo.offsetLeft - primeiro.offsetLeft : faixa.clientWidth;
+      faixa.scrollBy({ left: passo * direcao });
+    }
   }
 
   filtrarItens(): void {
