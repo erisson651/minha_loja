@@ -50,3 +50,67 @@
   .boas-vindas { grid-template-columns: 1fr; }
   .ilustracao-spa { display: none; }
 }
+
+.vitrine {
+  margin-bottom: 2rem;
+  padding: clamp(1rem, 3vw, 1.75rem);
+  border-radius: 1.6rem;
+  background: #eef1e8;
+  color: #263f36;
+}
+
+.vitrine-cabecalho {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  margin-bottom: 1rem;
+}
+
+.vitrine-cabecalho h2 { margin: 0; }
+.vitrine-controles { display: flex; gap: .4rem; }
+
+.vitrine-controles button {
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  border: 1px solid #31564a;
+  border-radius: 2rem;
+  padding: .35rem .75rem;
+  background: var(--spa-papel);
+  color: #31564a;
+  cursor: pointer;
+}
+
+.vitrine-controles button:hover {
+  background: #31564a;
+  color: white;
+}
+
+.vitrine-faixa {
+  position: relative;
+  display: flex;
+  gap: .85rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: .65rem;
+}
+
+.vitrine-item {
+  flex: 0 0 min(76%, 16rem);
+  min-width: 0;
+  padding: 1rem;
+  border: 1px solid #d6dfd0;
+  border-radius: 1rem;
+  background: var(--spa-papel);
+  overflow-wrap: anywhere;
+  scroll-snap-align: start;
+}
+
+.vitrine-tipo { margin: 0; font-size: .85rem; color: #456b57; }
+.vitrine-item h3 { margin: .4rem 0; }
+.vitrine-preco { margin: 0; font-weight: 700; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .vitrine-faixa { scroll-behavior: smooth; }
+}
